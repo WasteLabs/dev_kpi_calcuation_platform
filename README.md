@@ -8,7 +8,7 @@ Demo project for potential customers computing route main KPIs
 
 ----
 
-![Platform design](docs/platform_design.png)
+![Platform design](./docs/platform_design.png)
 
 
 
