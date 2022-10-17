@@ -1,17 +1,18 @@
-# **Dev veolia uk backend** 🚛
+# **DEV KPI CALCULATION PLATFORM** 🚛
 
-Project of routing optimisation platform for Veolia. Given repository is created for backend development
+[Design documentations](https://wastelabs.almanac.io/docs/kpi-calculation-platform-design-doc-bdSdV5xEtGKTndzzeFaVPIw67Tfs3IT9?docView=Editing)
 
-## Infrastructure
+Demo project for potential customers computing route main KPIs
+
+## **Platform desing**
 
 ----
 
-![Infrastructure](docs/infrastructure.png)
-
-![Component](docs/component.png)
+![Platform design](docs/platform_design.png)
 
 
-## Setup development environment
+
+## **Setup development environment**
 
 ----
 
