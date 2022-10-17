@@ -1,0 +1,16 @@
+.github
+.pytest_cache
+.vscode
+conf
+data
+docs
+logs
+notebooks
+terraform
+.coverage
+.gitignore
+Makefile
+.env
+.pre-commit-config
+.info.log
+README.md

@@ -1,0 +1,47 @@
+[tool.poetry]
+name = "dev_veolia_uk_backend"
+version = "1.2.0"
+description = "Backend module of routing optimization solution for Veolia UK"
+readme = "README.md"
+authors = [
+    "Adil Rashitov | adil@wastelabs.co",
+    "Elias Willemse | elias@wastelabs.co",
+]
+
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+fastapi = "^0.81.0"
+requests = "^2.28.1"
+uvicorn = "^0.18.3"
+gunicorn = "^20.1.0"
+pandas = "^1.4.3"
+anyconfig = "^0.13.0"
+scikit-learn = "^1.1.2"
+numpy = "^1.23.2"
+scipy = "^1.9.1"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^5.0.4"
+pylint = "^2.15.0"
+flake8-bugbear = "^22.8.23"
+flake8-builtins = "^1.5.3"
+flake8-cognitive-complexity = "^0.1.0"
+flake8-commas = "^2.1.0"
+flake8-functions = "^0.0.7"
+flake8-import-order = "^0.18.1"
+flake8-polyfill = "^1.0.2"
+pytest-parallel = "^0.1.1"
+jupyter = "^1.0.0"
+jupyter-contrib-core = "^0.4.0"
+jupyter-contrib-nbextensions = "^0.5.1"
+pytest-cov = "^3.0.0"
+autopep8 = "^1.7.0"
+requests-mock = "^1.10.0"
+jupyterthemes = "^0.20.0"
+pre-commit = "^2.20.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,78 @@
+name: Continous testing
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+
+  lint:
+
+    name: Linting tests
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10"
+
+    - name: Install pre-commit hook
+      run: python3 -m pip install pre-commit
+
+    - name: autopep8
+      run: pre-commit run autopep8 --all-files
+
+    - name: Pylint
+      run: pre-commit run pylint --all-files
+
+    - name: Flake8
+      run: pre-commit run flake8 --all-files
+
+  local-test:
+
+    name: >
+      CI local testing (${{ matrix.python-version }}, ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [
+          "ubuntu-latest",
+          # "macos-latest",
+        ]
+        python-version: ["3.10"]
+
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      env:
+        POETRY_VIRTUALENVS_CREATE: false
+      run: |
+        pip3 install --upgrade pip
+        pip3 install wheel poetry
+        poetry install
+
+    # - name: Execution of test cases
+    #   env:
+    #     OSRM_VAN: ${{ secrets.OSRM_VAN }}
+    #     OSRM_BICYCLE: ${{ secrets.OSRM_BICYCLE }}
+    #   run: |
+    #     pytest
