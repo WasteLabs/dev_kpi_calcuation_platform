@@ -1,6 +1,8 @@
 from typing import Any
+
 import pandas as pd
 import pytest
+from shapely.geometry import LineString
 
 from src.osrm.parsers.route import RouteParser
 
@@ -55,6 +57,14 @@ class TestRouteParser:
         parser = RouteParser(content=response_coordinates)
         assert isinstance(parser.df_coordinates, pd.DataFrame)
         assert parser.df_coordinates.equals(expected_df_coordinates)
+
+    def test_linestring_coordinates_parse(
+            self,
+            response_coordinates: dict[str, Any],
+            expected_df_coordinates: list[list[int]],
+    ):
+        parser = RouteParser(content=response_coordinates)
+        assert isinstance(parser.linestring_coordinates, LineString)
 
     def test_malformed_key_sequence_1(
             self,

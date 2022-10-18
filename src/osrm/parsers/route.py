@@ -1,6 +1,7 @@
 from ..abstract import AbstractParser
 from ..models import Schema
 
+from shapely.geometry import LineString
 import pandas as pd
 
 
@@ -23,3 +24,7 @@ class RouteParser(AbstractParser):
             self.coordinates,
             columns=[schema.lon_col, schema.lat_col],
         )
+
+    @property
+    def linestring_coordinates(self) -> LineString:
+        return LineString(coordinates=self.coordinates)
