@@ -41,6 +41,7 @@ autopep8 = "^1.7.0"
 requests-mock = "^1.10.0"
 jupyterthemes = "^0.20.0"
 pre-commit = "^2.20.0"
+keplergl = "^0.3.2"
 
 [build-system]
 requires = ["poetry-core"]
