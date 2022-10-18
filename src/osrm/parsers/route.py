@@ -39,3 +39,11 @@ class RouteParser(AbstractParser):
             content=self.content,
             key_sequence=_key_sequence,
         )
+
+    @property
+    def total_distance_meters(self) -> Union[int, float]:
+        _key_sequence = ["routes", 0, "distance"]
+        return self._get_key_seq_value(
+            content=self.content,
+            key_sequence=_key_sequence,
+        )

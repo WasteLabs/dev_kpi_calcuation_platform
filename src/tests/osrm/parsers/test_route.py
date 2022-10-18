@@ -45,8 +45,18 @@ def total_route_duration() -> dict[str, Any]:
 
 
 @pytest.fixture
-def expected_total_duration_sec() -> dict[str, Any]:
+def expected_total_duration_sec() -> int:
     return 121
+
+
+@pytest.fixture
+def total_route_distance() -> dict[str, Any]:
+    return {"routes": [{"distance": 1000}]}
+
+
+@pytest.fixture
+def expected_route_distance() -> int:
+    return 1000
 
 
 class TestRouteParser:
@@ -83,6 +93,14 @@ class TestRouteParser:
     ):
         parser = RouteParser(content=response_coordinates)
         assert isinstance(parser.linestring_coordinates, LineString)
+
+    def test_total_distance_meter(
+            self,
+            total_route_distance: dict[str, Any],
+            expected_route_distance: int,
+    ):
+        parser = RouteParser(content=total_route_distance)
+        assert parser.total_distance_meters == expected_route_distance
 
     def test_malformed_key_sequence_1(
             self,
