@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
 import logging
 from typing import Any
 
 from pydantic import BaseModel
+from pydantic import Field
 import requests
 
 
@@ -54,3 +56,30 @@ class AbstractParameters(BaseModel):
             ),
         )
         return "?" + "&".join(params)
+
+
+class AbstractParser(BaseModel):
+    content: dict[str, Any] = Field(description="Response content")
+
+    def _get_key_seq_value(
+            self,
+            content: dict[str, Any],
+            key_sequence: list[str],
+    ) -> Any:
+        value = deepcopy(content)
+        try:
+            for key in key_sequence:
+                value = value[key]
+            return value
+        except KeyError:
+            msg = f"Incorrect key in key sequence: {key_sequence}"
+            logging.error(msg)
+            raise RuntimeError(msg)
+        except TypeError:
+            msg = f"Incorrect key index reference: {key_sequence}"
+            logging.error(msg)
+            raise RuntimeError(msg)
+        except IndexError:
+            msg = f"Incorrect key index reference: {key_sequence}"
+            logging.error(msg)
+            raise RuntimeError(msg)
