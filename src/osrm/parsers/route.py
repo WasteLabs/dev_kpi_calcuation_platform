@@ -1,8 +1,11 @@
+from typing import Union
+
+import pandas as pd
+from shapely.geometry import LineString
+
+
 from ..abstract import AbstractParser
 from ..models import Schema
-
-from shapely.geometry import LineString
-import pandas as pd
 
 
 schema = Schema()
@@ -28,3 +31,11 @@ class RouteParser(AbstractParser):
     @property
     def linestring_coordinates(self) -> LineString:
         return LineString(coordinates=self.coordinates)
+
+    @property
+    def total_duration_sec(self) -> Union[int, float]:
+        _key_sequence = ["routes", 0, "duration"]
+        return self._get_key_seq_value(
+            content=self.content,
+            key_sequence=_key_sequence,
+        )

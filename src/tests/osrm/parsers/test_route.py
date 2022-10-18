@@ -39,6 +39,16 @@ def expected_df_coordinates(expected_coordinates) -> list[list[int]]:
     )
 
 
+@pytest.fixture
+def total_route_duration() -> dict[str, Any]:
+    return {"routes": [{"duration": 121}]}
+
+
+@pytest.fixture
+def expected_total_duration_sec() -> dict[str, Any]:
+    return 121
+
+
 class TestRouteParser:
 
     def test_coordinates_parse(
@@ -57,6 +67,14 @@ class TestRouteParser:
         parser = RouteParser(content=response_coordinates)
         assert isinstance(parser.df_coordinates, pd.DataFrame)
         assert parser.df_coordinates.equals(expected_df_coordinates)
+
+    def test_parse_total_duration_sec(
+            self,
+            total_route_duration: dict[str, Any],
+            expected_total_duration_sec: int,
+    ):
+        parser = RouteParser(content=total_route_duration)
+        assert parser.total_duration_sec == expected_total_duration_sec
 
     def test_linestring_coordinates_parse(
             self,
