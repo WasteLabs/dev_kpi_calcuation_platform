@@ -26,6 +26,11 @@ def expected_query() -> str:
     )
 
 
+@pytest.fixture
+def malformed_url() -> pd.DataFrame:
+    return "dummy_text"
+
+
 class TestRouteQueryDriver:
 
     def test_preprocess_query(
@@ -45,3 +50,13 @@ class TestRouteQueryDriver:
         query = query_driver.preprocess_query(london_coordinates)
         result = query_driver.query(query)
         assert result["code"] == "Ok"
+
+    def test_malformed_url_query(
+            self,
+            query_driver: RouteQueryDriver,
+            malformed_url: str,
+    ):
+        try:
+            query_driver.query(malformed_url)
+        except RuntimeError as exc:
+            assert isinstance(exc, Exception)
