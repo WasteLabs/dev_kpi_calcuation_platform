@@ -1,4 +1,4 @@
-# from . import nodes
+from . import nodes
 
 
 class Session(object):
@@ -11,11 +11,8 @@ class Session(object):
         self.source_path = source_path
         self.filename = source_path.rsplit("/", 1)[1]
 
-    # def read_file(self, source_path: str):
-    #     self.stops = nodes.read_excel_file(
-    #         path=source_path,
-    #     )
-    #     self.__source_path
+    def read_stops(self):
+        self.stops = nodes.read_excel_file(path=self.source_path)
 
     # def process_stops(self):
     #     self.stops = self.stops \

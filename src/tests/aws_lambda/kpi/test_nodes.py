@@ -5,14 +5,6 @@ from src.aws_lambda.kpi import nodes
 
 
 @pytest.fixture
-def s3_sample_path() -> str:
-    return (
-        "s3://dev-data-temp/dev_kpi_calculation_platform/dev"
-        "/01_raw/test_stops.xlsx"
-    )
-
-
-@pytest.fixture
 def generate_id_sample(
         london_coordinates: pd.DataFrame,
         stops_schema: object,
