@@ -14,8 +14,8 @@ class Session(object):
     def read_stops(self):
         self.stops = nodes.read_excel_file(path=self.source_path)
 
-    # def process_stops(self):
-    #     self.stops = self.stops \
-    #         .pipe(lambda x: nodes.expand_name(stops=x, path=SRC_S3_FPATH)) \
-    #         .pipe(nodes.expand_processing_time) \
-    #         .pipe(nodes.generate_id)
+    def process_stops(self):
+        self.stops = self.stops \
+            .pipe(lambda x: nodes.expand_name(stops=x, fname=self.filename)) \
+            .pipe(nodes.expand_processing_time) \
+            .pipe(nodes.generate_id)

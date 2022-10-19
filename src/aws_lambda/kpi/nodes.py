@@ -13,9 +13,8 @@ def read_excel_file(path: str) -> pd.DataFrame:
     return wr.s3.read_excel(path=path)
 
 
-def expand_name(stops: pd.DataFrame, path: str) -> pd.DataFrame:
-    filename = path.rsplit("/", 1)[1]
-    stops[schema.col_filename] = filename
+def expand_name(stops: pd.DataFrame, fname: str) -> pd.DataFrame:
+    stops[schema.col_filename] = fname
     return stops
 
 

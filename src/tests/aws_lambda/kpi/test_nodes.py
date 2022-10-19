@@ -25,14 +25,14 @@ class TestNodes:
     def test_expand_name(
             self,
             london_coordinates: pd.DataFrame,
-            s3_sample_path: str,
             stops_schema: object,
+            s3_fname: str,
     ) -> pd.DataFrame:
         stops = nodes.expand_name(
             stops=london_coordinates,
-            path=s3_sample_path,
+            fname=s3_fname,
         )
-        assert stops[stops_schema.col_filename].unique()[0] == "test_stops.xlsx"
+        assert stops[stops_schema.col_filename].unique()[0] == s3_fname
 
     def test_expand_processing_time(
             self,
