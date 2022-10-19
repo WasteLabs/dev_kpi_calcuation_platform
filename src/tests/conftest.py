@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 
+from src.models import StopsSchema
 from src.osrm import Client
 
 
@@ -22,3 +23,8 @@ def london_coordinates() -> pd.DataFrame:
 @pytest.fixture
 def osrm_client(host: str) -> Client:
     return Client(host=host, timeout=5)
+
+
+@pytest.fixture
+def stops_schema() -> StopsSchema:
+    return StopsSchema()
