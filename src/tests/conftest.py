@@ -1,6 +1,8 @@
 import pandas as pd
 import pytest
 
+from src.osrm import Client
+
 
 @pytest.fixture
 def host() -> str:
@@ -15,3 +17,8 @@ def london_coordinates() -> pd.DataFrame:
         {'latitude': 51.4718502496285, 'longitude': -0.0320751884543755},
         {'latitude': 51.47088782010107, 'longitude': -0.0345428331590431},
     ])
+
+
+@pytest.fixture
+def osrm_client(host: str) -> Client:
+    return Client(host=host, timeout=5)
