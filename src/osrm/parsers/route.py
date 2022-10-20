@@ -12,6 +12,8 @@ schema = Schema()
 
 
 class RouteParser(AbstractParser):
+    SEC_IN_HOURS = 3600
+    METERS_IN_KILOMETER = 1000
 
     @property
     def coordinates(self) -> list[list[float]]:
@@ -41,9 +43,17 @@ class RouteParser(AbstractParser):
         )
 
     @property
+    def total_duration_hour(self) -> Union[int, float]:
+        return round(self.total_duration_sec / self.SEC_IN_HOURS, 6)
+
+    @property
     def total_distance_meters(self) -> Union[int, float]:
         _key_sequence = ["routes", 0, "distance"]
         return self._get_key_seq_value(
             content=self.content,
             key_sequence=_key_sequence,
         )
+
+    @property
+    def total_distance_km(self) -> Union[int, float]:
+        return self.total_distance_meters / self.METERS_IN_KILOMETER
