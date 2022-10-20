@@ -30,3 +30,7 @@ def generate_id(stops: pd.DataFrame) -> pd.DataFrame:
         stops[schema.col_filename].astype(str)
     )
     return stops
+
+
+def export_parquet_to_athena(df: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
+    return wr.s3.to_parquet(df=df, *args, **kwargs)

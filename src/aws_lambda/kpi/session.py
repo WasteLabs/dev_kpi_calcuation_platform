@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 import pandas as pd
 
@@ -5,8 +6,10 @@ from . import nodes
 from ...models import StopsSchema
 from ...osrm import Client
 from ... import environment as env
+from . import configs as lambda_configs
 
 
+logger = logging.getLogger(__name__)
 schema = StopsSchema()
 
 
@@ -23,7 +26,9 @@ class Session(object):
         self.client = Client(host=env.OSRM_HOST)
 
     def read_stops(self):
+        logger.info(f"Start reading stops from: {self.source_path}")
         self.stops = nodes.read_excel_file(path=self.source_path)
+        logger.info(f"Finish reading stops from: {self.source_path}\n")
 
     def __generate_ids(self, df: pd.DataFrame) -> pd.DataFrame:
         return df \
@@ -32,9 +37,12 @@ class Session(object):
             .pipe(nodes.generate_id)
 
     def process_stops(self):
+        logger.info("Start processing stops")
         self.stops = self.__generate_ids(self.stops)
+        logger.info("Finish processing stops\n")
 
     def compute_kpi(self):
+        logger.info("Start computing kpi")
         route = self.client.route(self.stops.copy())
         kpi = pd.DataFrame(
             {
@@ -43,3 +51,20 @@ class Session(object):
             }, index=[0],
         )
         self.kpi = self.__generate_ids(kpi)
+        logger.info("Finish computing kpi\n")
+
+    def export_kpi(self):
+        logger.info("Start export kpi")
+        nodes.export_parquet_to_athena(
+            df=self.kpi,
+            **lambda_configs.KPI_WR_EXPORT_PARQUET_CONFIGS,
+        )
+        logger.info("Finish export kpi\n")
+
+    def export_stops(self):
+        logger.info("Start export stops")
+        nodes.export_parquet_to_athena(
+            df=self.stops,
+            **lambda_configs.STOPS_WR_EXPORT_PARQUET_CONFIGS,
+        )
+        logger.info("Finish export stops\n")

@@ -46,3 +46,11 @@ class TestSession:
         assert stops_schema.col_filename in session.kpi
         assert stops_schema.col_processing_datetime in session.kpi
         assert stops_schema.col_processing_id in session.kpi
+
+    def test_entire(self, s3_sample_path: str):
+        session = Session(source_path=s3_sample_path)
+        session.read_stops()
+        session.process_stops()
+        session.compute_kpi()
+        session.export_kpi()
+        session.export_stops()
