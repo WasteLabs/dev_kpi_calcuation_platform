@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import awswrangler as wr
 import pandas as pd
 
@@ -18,9 +16,11 @@ def expand_name(stops: pd.DataFrame, fname: str) -> pd.DataFrame:
     return stops
 
 
-def expand_processing_time(stops: pd.DataFrame) -> pd.DataFrame:
-    _datetime = datetime.now().strftime(schema.datetime_format)
-    stops[schema.col_processing_datetime] = str(_datetime)
+def expand_processing_time(
+        stops: pd.DataFrame,
+        timestamp_id: str,
+) -> pd.DataFrame:
+    stops[schema.col_processing_datetime] = timestamp_id
     return stops
 
 

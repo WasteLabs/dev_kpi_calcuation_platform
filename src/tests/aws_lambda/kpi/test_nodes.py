@@ -14,6 +14,11 @@ def generate_id_sample(
     return london_coordinates
 
 
+@pytest.fixture
+def timestamp_id() -> str:
+    return "2022-05-12 09:00:00"
+
+
 class TestNodes:
 
     def test_read_excel_file(self, s3_sample_path: str) -> pd.DataFrame:
@@ -38,8 +43,12 @@ class TestNodes:
             self,
             london_coordinates: pd.DataFrame,
             stops_schema: object,
+            timestamp_id: str,
     ) -> pd.DataFrame:
-        stops = nodes.expand_processing_time(stops=london_coordinates)
+        stops = nodes.expand_processing_time(
+            stops=london_coordinates,
+            timestamp_id=timestamp_id,
+        )
         assert isinstance(stops, pd.DataFrame)
         assert stops_schema.col_processing_datetime in stops.columns
         pd.to_datetime(stops[stops_schema.col_processing_datetime])
