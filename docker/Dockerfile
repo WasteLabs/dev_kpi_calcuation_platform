@@ -17,7 +17,7 @@ ENV POETRY_VIRTUALENVS_CREATE=false
 
 COPY ./ ./
 
-RUN pip3 install --upgrade pip && pip3 install wheel poetry && poetry install
+RUN pip3 install --upgrade pip && pip3 install wheel poetry && poetry install --only main
 
 
 CMD [ "src/aws_lambda/kpi/main.handler" ]
