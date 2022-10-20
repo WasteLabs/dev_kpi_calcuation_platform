@@ -33,3 +33,16 @@ class TestSession:
         assert stops_schema.col_filename in session.stops
         assert stops_schema.col_processing_datetime in session.stops
         assert stops_schema.col_processing_id in session.stops
+
+    def test_compute_kpi(
+            self,
+            session: Session,
+            london_coordinates: pd.DataFrame,
+            stops_schema: object,
+    ):
+        session.stops = london_coordinates
+        session.compute_kpi()
+        assert "kpi" in session.__dict__
+        assert stops_schema.col_filename in session.kpi
+        assert stops_schema.col_processing_datetime in session.kpi
+        assert stops_schema.col_processing_id in session.kpi
