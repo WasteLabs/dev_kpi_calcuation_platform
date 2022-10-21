@@ -32,7 +32,7 @@ class Session(object):
     def read_stops(self):
         logger.info(f"Start reading stops from: {self.source_path}")
         self.stops = nodes.read_excel_file(path=self.source_path)
-        logger.info(f"Finish reading stops from: {self.source_path}\n")
+        logger.info(f"Finish reading stops from: {self.source_path}")
 
     def __generate_ids(self, df: pd.DataFrame) -> pd.DataFrame:
         return df \
@@ -56,7 +56,7 @@ class Session(object):
             }, index=[0],
         )
         self.kpi = self.__generate_ids(kpi)
-        logger.info("Finish computing kpi\n")
+        logger.info("Finish computing kpi")
 
     def export_kpi(self):
         logger.info("Start export kpi")
@@ -64,7 +64,7 @@ class Session(object):
             df=self.kpi,
             **lambda_configs.KPI_WR_EXPORT_PARQUET_CONFIGS,
         )
-        logger.info("Finish export kpi\n")
+        logger.info("Finish export kpi")
 
     def export_stops(self):
         logger.info("Start export stops")
@@ -72,4 +72,4 @@ class Session(object):
             df=self.stops,
             **lambda_configs.STOPS_WR_EXPORT_PARQUET_CONFIGS,
         )
-        logger.info("Finish export stops\n")
+        logger.info("Finish export stops")
