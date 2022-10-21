@@ -1,7 +1,14 @@
 from pydantic import BaseModel, Field
 
 
-class StopsSchema(BaseModel):
+class Formats(BaseModel):
+    datetime_format: str = Field(
+        default="%Y-%m-%d %H:%M:%S",
+        description="datetime class format",
+    )
+
+
+class IDs(BaseModel):
     col_filename: str = Field(
         default="filename",
         description="source filename",
@@ -14,7 +21,22 @@ class StopsSchema(BaseModel):
         default="processing_id",
         description="compute ID",
     )
-    datetime_format: str = Field(
-        default="%Y-%m-%d %H:%M:%S",
-        description="datetime class format",
+
+
+class StopsSchema(IDs):
+    pass
+
+
+class KpiSchema(IDs):
+    travel_distance: str = Field(
+        default="distance_km",
+        description="Total travelled distance in km",
+    )
+    travel_duration: str = Field(
+        default="duration_hour",
+        description="Total travelled duration in hours",
+    )
+    travel_path: str = Field(
+        default="travel_path",
+        description="Linestring object of travel path",
     )

@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 
+from src.models import KpiSchema
 from src.models import StopsSchema
 from src.osrm import Client
 
@@ -28,3 +29,8 @@ def osrm_client(host: str) -> Client:
 @pytest.fixture
 def stops_schema() -> StopsSchema:
     return StopsSchema()
+
+
+@pytest.fixture
+def kpi_schema() -> KpiSchema:
+    return KpiSchema()
