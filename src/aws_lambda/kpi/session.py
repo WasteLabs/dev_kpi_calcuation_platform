@@ -3,6 +3,8 @@ from datetime import datetime
 import pandas as pd
 
 from . import nodes
+from ...models import Formats
+from ...models import KpiSchema
 from ...models import StopsSchema
 from ...osrm import Client
 from ... import environment as env
@@ -10,7 +12,9 @@ from . import configs as lambda_configs
 
 
 logger = logging.getLogger(__name__)
-schema = StopsSchema()
+formats = Formats()
+stops_schema = StopsSchema()
+kpi_schema = KpiSchema()
 
 
 class Session(object):
@@ -22,7 +26,7 @@ class Session(object):
         assert type(source_path) is str
         self.source_path = source_path
         self.filename = source_path.rsplit("/", 1)[1]
-        self.timestamp_id = datetime.now().strftime(schema.datetime_format)
+        self.timestamp_id = datetime.now().strftime(formats.datetime_format)
         self.client = Client(host=env.OSRM_HOST)
 
     def read_stops(self):
@@ -46,8 +50,9 @@ class Session(object):
         route = self.client.route(self.stops.copy())
         kpi = pd.DataFrame(
             {
-                "distance": route.total_distance_km,
-                "duration": route.total_duration_hour,
+                kpi_schema.travel_distance: route.total_distance_km,
+                kpi_schema.travel_duration: route.total_duration_hour,
+                kpi_schema.travel_path: str(route.linestring_coordinates),
             }, index=[0],
         )
         self.kpi = self.__generate_ids(kpi)
