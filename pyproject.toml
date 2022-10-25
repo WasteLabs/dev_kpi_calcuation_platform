@@ -10,16 +10,18 @@ authors = [
 
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
-fastapi = "^0.81.0"
+python = ">=3.9,<3.11"
 requests = "^2.28.1"
-uvicorn = "^0.18.3"
-gunicorn = "^20.1.0"
 pandas = "^1.4.3"
 anyconfig = "^0.13.0"
 scikit-learn = "^1.1.2"
 numpy = "^1.23.2"
 scipy = "^1.9.1"
+boto3 = "^1.24.93"
+awswrangler = "^2.17.0"
+pydantic = "^1.10.2"
+shapely = "^1.8.5.post1"
+geopandas = "^0.11.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -41,6 +43,7 @@ autopep8 = "^1.7.0"
 requests-mock = "^1.10.0"
 jupyterthemes = "^0.20.0"
 pre-commit = "^2.20.0"
+keplergl = "^0.3.2"
 
 [build-system]
 requires = ["poetry-core"]

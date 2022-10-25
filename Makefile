@@ -31,27 +31,16 @@ run_test:
 run_precommit:
 	pre-commit run --all-files
 
-run_uvicorn:
-	uvicorn src.endpoints.main:app \
-		--host 0.0.0.0 \
-		--port 8000 \
-		--reload \
-		--log-config log.ini
-
-run_gunicorn:
-	gunicorn \
-		--bind 0.0.0.0:8000 \
-		src.endpoints.main:app \
-		--workers 2 \
-		-k uvicorn.workers.UvicornWorker \
-		--timeout 5 \
-		--log-config log.ini
-
 run_build:
 	docker build -f ./docker/Dockerfile -t dev_kpi_calculation_platform:latest .
 
-run_docker_api:
-	docker run --platform linux/amd64 -p 80:8000 --env-file .env --mount type=bind,source="$(pwd)/"logs,target=/dev_veolia_uk_backend/logs -d dev_veolia_uk_backend:latest gunicorn --bind 0.0.0.0:8000 --workers 8 -k uvicorn.workers.UvicornWorker --timeout 5 --log-config log.ini src.endpoints.main:app
+run_lambda:
+	docker run \
+	-p 9000:8080 \
+	-e AWS_REGION=${AWS_REGION} \
+	-e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+	-e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+	dev_kpi_calculation_platform:latest
 
-run_docker_tests:
-	docker run -it --platform linux/amd64 --env-file .env dev_kpi_calculation_platform:latest pytest
+run_test:
+	pytest
