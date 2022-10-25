@@ -22,8 +22,4 @@ def fabricate_source_file_path(event) -> str:
 
 def handler(event, context):
     session = Session(source_path=fabricate_source_file_path(event))
-    session.read_stops()
-    session.process_stops()
-    session.compute_kpi()
-    session.export_kpi()
-    session.export_stops()
+    session.run_lifecycle()

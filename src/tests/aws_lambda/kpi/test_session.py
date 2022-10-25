@@ -33,6 +33,7 @@ class TestSession:
             stops_schema: object,
     ):
         session.stops = london_coordinates
+        session.extract_osrm_route_details()
         session.process_stops()
         assert "stops" in session.__dict__
         self.__check_schema(schema=stops_schema, df=session.stops)
@@ -44,14 +45,11 @@ class TestSession:
             kpi_schema: object,
     ):
         session.stops = london_coordinates
+        session.extract_osrm_route_details()
         session.compute_kpi()
         assert "kpi" in session.__dict__
         self.__check_schema(schema=kpi_schema, df=session.kpi)
 
-    def test_entire(self, s3_sample_path: str):
+    def test_run_lifecycle(self, s3_sample_path: str):
         session = Session(source_path=s3_sample_path)
-        session.read_stops()
-        session.process_stops()
-        session.compute_kpi()
-        session.export_kpi()
-        session.export_stops()
+        session.run_lifecycle()

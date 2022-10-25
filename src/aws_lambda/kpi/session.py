@@ -43,16 +43,20 @@ class Session(object):
     def process_stops(self):
         logger.info("Start processing stops")
         self.stops = self.__generate_ids(self.stops)
-        logger.info("Finish processing stops\n")
+        self.stops[stops_schema.dur_from_prev_point] = self.osrm_route.duration_per_stop_hours
+        self.stops[stops_schema.dist_from_prev_point] = self.osrm_route.distance_per_stop_km
+        logger.info("Finish processing s  tops\n")
+
+    def extract_osrm_route_details(self):
+        self.osrm_route = self.client.route(self.stops.copy())
 
     def compute_kpi(self):
         logger.info("Start computing kpi")
-        route = self.client.route(self.stops.copy())
         kpi = pd.DataFrame(
             {
-                kpi_schema.travel_distance: route.total_distance_km,
-                kpi_schema.travel_duration: route.total_duration_hour,
-                kpi_schema.travel_path: str(route.linestring_coordinates),
+                kpi_schema.travel_distance: self.osrm_route.total_distance_km,
+                kpi_schema.travel_duration: self.osrm_route.total_duration_hour,
+                kpi_schema.travel_path: str(self.osrm_route.linestring_coordinates),
             }, index=[0],
         )
         self.kpi = self.__generate_ids(kpi)
@@ -73,3 +77,11 @@ class Session(object):
             **lambda_configs.STOPS_WR_EXPORT_PARQUET_CONFIGS,
         )
         logger.info("Finish export stops")
+
+    def run_lifecycle(self):
+        self.read_stops()
+        self.extract_osrm_route_details()
+        self.process_stops()
+        self.compute_kpi()
+        self.export_kpi()
+        self.export_stops()

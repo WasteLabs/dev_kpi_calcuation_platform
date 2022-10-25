@@ -93,7 +93,7 @@ class RouteParser(AbstractParser):
         return distance.tolist()
 
     @property
-    def duration_per_stop_meters(self):
+    def duration_per_stop_seconds(self):
         duration = list(
             map(
                 lambda x: x["duration"],
@@ -104,6 +104,6 @@ class RouteParser(AbstractParser):
 
     @property
     def duration_per_stop_hours(self):
-        duration = np.array(self.duration_per_stop_meters) / self.SEC_IN_HOURS
+        duration = np.array(self.duration_per_stop_seconds) / self.SEC_IN_HOURS
         duration = duration.round(self.ROUNDING_DECIMALS)
         return duration.tolist()

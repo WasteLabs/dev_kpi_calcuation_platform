@@ -245,7 +245,7 @@ class TestRouteParser:
             expected_duration_per_stop_seconds: list[dict[str, int]],
     ):
         parser = RouteParser(content=response_legs_duration_and_distance)
-        assert parser.distance_per_stop_meters == expected_duration_per_stop_seconds
+        assert parser.duration_per_stop_seconds == expected_duration_per_stop_seconds
 
     def test_distance_per_stop_km(
             self,
