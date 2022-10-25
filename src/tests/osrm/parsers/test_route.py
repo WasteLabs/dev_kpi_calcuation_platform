@@ -69,6 +69,62 @@ def expected_route_distance_km() -> int:
     return 1.0
 
 
+@pytest.fixture
+def response_legs_duration_and_distance() -> list[str, Any]:
+    return {
+        "routes": [{
+            "legs": [
+                {
+                    "duration": 1,
+                    "distance": 1,
+                }, {
+                    "duration": 1,
+                    "distance": 1,
+                }, {
+                    "duration": 1,
+                    "distance": 1,
+                },
+            ],
+        }],
+    }
+
+
+@pytest.fixture
+def expected_legs() -> list[str, Any]:
+    return [
+        {
+            "duration": 1,
+            "distance": 1,
+        }, {
+            "duration": 1,
+            "distance": 1,
+        }, {
+            "duration": 1,
+            "distance": 1,
+        },
+    ]
+
+
+@pytest.fixture
+def expected_duration_per_stop_seconds() -> list[int]:
+    return [0, 1, 1, 1]
+
+
+@pytest.fixture
+def expected_distance_per_stop_meters() -> list[int]:
+    return [0, 1, 1, 1]
+
+
+@pytest.fixture
+def expected_distance_per_stop_km() -> list[float]:
+    return [0.0, 0.001, 0.001, 0.001]
+
+
+@pytest.fixture
+def expected_duration_per_stop_hours() -> list[float]:
+    return [0.0, 0.000278, 0.000278, 0.000278]
+
+
 class TestRouteParser:
 
     def test_coordinates_parse(
@@ -166,3 +222,43 @@ class TestRouteParser:
             )
         except RuntimeError:
             assert True
+
+    def test_legs_extraction(
+            self,
+            response_legs_duration_and_distance: dict[str, Any],
+            expected_legs: list[dict[str, int]],
+    ):
+        parser = RouteParser(content=response_legs_duration_and_distance)
+        assert parser.legs == expected_legs
+
+    def test_distance_per_stop_meters(
+            self,
+            response_legs_duration_and_distance: dict[str, Any],
+            expected_distance_per_stop_meters: list[dict[str, int]],
+    ):
+        parser = RouteParser(content=response_legs_duration_and_distance)
+        assert parser.distance_per_stop_meters == expected_distance_per_stop_meters
+
+    def test_duration_per_stop_seconds(
+            self,
+            response_legs_duration_and_distance: dict[str, Any],
+            expected_duration_per_stop_seconds: list[dict[str, int]],
+    ):
+        parser = RouteParser(content=response_legs_duration_and_distance)
+        assert parser.distance_per_stop_meters == expected_duration_per_stop_seconds
+
+    def test_distance_per_stop_km(
+            self,
+            response_legs_duration_and_distance: dict[str, Any],
+            expected_distance_per_stop_km: list[dict[str, int]],
+    ):
+        parser = RouteParser(content=response_legs_duration_and_distance)
+        assert parser.distance_per_stop_km == expected_distance_per_stop_km
+
+    def test_distance_per_stop_hours(
+            self,
+            response_legs_duration_and_distance: dict[str, Any],
+            expected_duration_per_stop_hours: list[dict[str, int]],
+    ):
+        parser = RouteParser(content=response_legs_duration_and_distance)
+        assert parser.duration_per_stop_hours == expected_duration_per_stop_hours
