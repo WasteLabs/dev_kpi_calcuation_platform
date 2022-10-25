@@ -24,7 +24,14 @@ class IDs(BaseModel):
 
 
 class StopsSchema(IDs):
-    pass
+    dist_from_prev_point: str = Field(
+        default="dist_from_prev_point_km",
+        description="Travel distance from predecessing point",
+    )
+    dur_from_prev_point: str = Field(
+        default="dur_from_prev_point_hour",
+        description="Travel duration from predecessing point",
+    )
 
 
 class KpiSchema(IDs):
