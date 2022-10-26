@@ -34,4 +34,6 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_database"></a> [database](#output\_database) | Glue database name |
+| <a name="output_database_arn"></a> [database\_arn](#output\_database\_arn) | Glue database arn |
+| <a name="output_id"></a> [id](#output\_id) | Glue database id |
 <!-- END_TF_DOCS -->

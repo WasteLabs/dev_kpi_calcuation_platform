@@ -9,7 +9,7 @@ terraform {
   }
   backend "s3" {
     bucket  = "waste-labs-terraform-backends"
-    key     = "dev_kpi_calculation_platform/glue/tables.tfstate"
+    key     = "dev_kpi_calculation_platform/glue/database.tfstate"
     region  = "us-east-1"
     encrypt = true
   }
