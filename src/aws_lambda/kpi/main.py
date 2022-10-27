@@ -1,17 +1,17 @@
-import logging
-import sys
+# import logging
+# import sys
 
 from .session import Session
 
 
-root = logging.getLogger()
-root.setLevel(logging.INFO)
+# root = logging.getLogger()
+# root.setLevel(logging.INFO)
 
-log_handler = logging.StreamHandler(sys.stdout)
-log_handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s :::')
-log_handler.setFormatter(formatter)
-root.addHandler(log_handler)
+# log_handler = logging.StreamHandler(sys.stdout)
+# log_handler.setLevel(logging.INFO)
+# formatter = logging.Formatter('%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s :::')
+# log_handler.setFormatter(formatter)
+# root.addHandler(log_handler)
 
 
 def fabricate_source_file_path(event) -> str:

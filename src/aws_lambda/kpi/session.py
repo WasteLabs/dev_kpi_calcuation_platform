@@ -45,7 +45,7 @@ class Session(object):
         self.stops = self.__generate_ids(self.stops)
         self.stops[stops_schema.dur_from_prev_point] = self.osrm_route.duration_per_stop_hours
         self.stops[stops_schema.dist_from_prev_point] = self.osrm_route.distance_per_stop_km
-        logger.info("Finish processing s  tops\n")
+        logger.info("Finish processing stops")
 
     def extract_osrm_route_details(self):
         self.osrm_route = self.client.route(self.stops.copy())
