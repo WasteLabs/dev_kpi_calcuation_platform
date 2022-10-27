@@ -10,8 +10,6 @@ from ...osrm import Client
 from ... import environment as env
 from . import configs as lambda_configs
 
-
-logger = logging.getLogger(__name__)
 formats = Formats()
 stops_schema = StopsSchema()
 kpi_schema = KpiSchema()
@@ -30,9 +28,9 @@ class Session(object):
         self.client = Client(host=env.OSRM_HOST)
 
     def read_stops(self):
-        logger.info(f"Start reading stops from: {self.source_path}")
+        logging.info(f"Start reading stops from: {self.source_path}")
         self.stops = nodes.read_excel_file(path=self.source_path)
-        logger.info(f"Finish reading stops from: {self.source_path}")
+        logging.info(f"Finish reading stops from: {self.source_path}")
 
     def __generate_ids(self, df: pd.DataFrame) -> pd.DataFrame:
         return df \
@@ -41,17 +39,17 @@ class Session(object):
             .pipe(nodes.generate_id)
 
     def process_stops(self):
-        logger.info("Start processing stops")
+        logging.info("Start processing stops")
         self.stops = self.__generate_ids(self.stops)
         self.stops[stops_schema.dur_from_prev_point] = self.osrm_route.duration_per_stop_hours
         self.stops[stops_schema.dist_from_prev_point] = self.osrm_route.distance_per_stop_km
-        logger.info("Finish processing stops")
+        logging.info("Finish processing stops")
 
     def extract_osrm_route_details(self):
         self.osrm_route = self.client.route(self.stops.copy())
 
     def compute_kpi(self):
-        logger.info("Start computing kpi")
+        logging.info("Start computing kpi")
         kpi = pd.DataFrame(
             {
                 kpi_schema.travel_distance: self.osrm_route.total_distance_km,
@@ -60,23 +58,23 @@ class Session(object):
             }, index=[0],
         )
         self.kpi = self.__generate_ids(kpi)
-        logger.info("Finish computing kpi")
+        logging.info("Finish computing kpi")
 
     def export_kpi(self):
-        logger.info("Start export kpi")
+        logging.info("Start export kpi")
         nodes.export_parquet_to_athena(
             df=self.kpi,
             **lambda_configs.KPI_WR_EXPORT_PARQUET_CONFIGS,
         )
-        logger.info("Finish export kpi")
+        logging.info("Finish export kpi")
 
     def export_stops(self):
-        logger.info("Start export stops")
+        logging.info("Start export stops")
         nodes.export_parquet_to_athena(
             df=self.stops,
             **lambda_configs.STOPS_WR_EXPORT_PARQUET_CONFIGS,
         )
-        logger.info("Finish export stops")
+        logging.info("Finish export stops")
 
     def run_lifecycle(self):
         self.read_stops()
