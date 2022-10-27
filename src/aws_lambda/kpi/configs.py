@@ -7,7 +7,7 @@ stops_schema = StopsSchema()
 
 
 STOPS_WR_EXPORT_PARQUET_CONFIGS = {
-    "path": f"s3://${env.AWS_S3_BUCKET}/{env.APP_ENV}/02_primary/stops/",
+    "path": f"s3://{env.AWS_S3_BUCKET}/{env.APP_ENV}/02_primary/stops/",
     "boto3_session": boto3.Session(region_name=env.AWS_REGION),
     "index": False,
     "dataset": True,
@@ -21,7 +21,7 @@ STOPS_WR_EXPORT_PARQUET_CONFIGS = {
 
 
 KPI_WR_EXPORT_PARQUET_CONFIGS = {
-    "path": f"s3://${env.AWS_S3_BUCKET}/{env.APP_ENV}/02_primary/kpi/",
+    "path": f"s3://{env.AWS_S3_BUCKET}/{env.APP_ENV}/02_primary/kpi/",
     "boto3_session": boto3.Session(region_name=env.AWS_REGION),
     "index": False,
     "dataset": True,
