@@ -141,7 +141,7 @@ resource "aws_glue_catalog_table" "stops" {
 
     columns {
       name    = "route_sequence"
-      type    = "short"
+      type    = "int"
       comment = "Sequence number according stop must be visited."
     }
 
@@ -163,11 +163,6 @@ resource "aws_glue_catalog_table" "stops" {
       comment = "Travel duration (hours) is needed to reach current point from previous."
     }
 
-    columns {
-      name    = "dist_from_prev_point_km"
-      type    = "double"
-      comment = "Travel distance (kilometers) is needed to reach current point from previous."
-    }
     columns {
       name    = "dist_from_prev_point_km"
       type    = "double"

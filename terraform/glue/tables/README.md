@@ -37,5 +37,7 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_glue_table_arns"></a> [glue\_table\_arns](#output\_glue\_table\_arns) | Glue table arns |
 <!-- END_TF_DOCS -->
