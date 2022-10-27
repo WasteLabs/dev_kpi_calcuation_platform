@@ -34,7 +34,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_build_tag"></a> [build\_tag](#input\_build\_tag) | Project name | `string` | `"5"` | no |
+| <a name="input_build_tag"></a> [build\_tag](#input\_build\_tag) | Project name | `string` | `"6"` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Project name | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | Project deployment region | `string` | n/a | yes |
 
