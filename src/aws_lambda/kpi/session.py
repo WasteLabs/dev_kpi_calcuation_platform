@@ -47,6 +47,7 @@ class Session(object):
         logger.info("Finish processing stops")
 
     def extract_osrm_route_details(self):
+        self.stops = stops_schema.order_stops(self.stops)
         self.osrm_route = self.client.route(self.stops.copy())
 
     def compute_kpi(self):
