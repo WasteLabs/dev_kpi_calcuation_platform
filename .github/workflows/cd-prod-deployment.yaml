@@ -131,7 +131,7 @@ jobs:
       id: lambda-plan
       env:
         TF_WORKSPACE: ${{ matrix.environment }}
-      run: cd terraform/lambda && terraform plan -no-color -input=false
+      run: cd terraform/lambda && make plan
       continue-on-error: false
 
     - name: Lambda | Status Check
@@ -143,4 +143,4 @@ jobs:
       id: lambda-apply
       env:
         TF_WORKSPACE: ${{ matrix.environment }}
-      run: cd terraform/lambda && terraform apply -auto-approve
+      run: cd terraform/lambda && make apply
