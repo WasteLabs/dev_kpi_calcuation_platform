@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "dev_veolia_uk_backend"
-version = "1.2.0"
-description = "Backend module of routing optimization solution for Veolia UK"
+name = "dev_kpi_calculation_platform"
+version = "1.0.0"
+description = "Route KPI calculation demo platform for potential customer demonstrations"
 readme = "README.md"
 authors = [
     "Adil Rashitov | adil@wastelabs.co",
