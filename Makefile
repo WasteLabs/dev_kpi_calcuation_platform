@@ -40,6 +40,7 @@ run_lambda:
 	-e AWS_REGION=${AWS_REGION} \
 	-e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
 	-e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+	-e APP_ENV=${APP_ENV} \
 	dev_kpi_calculation_platform:latest
 
 run_test:
