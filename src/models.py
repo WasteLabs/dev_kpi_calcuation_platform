@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+import pandas as pd
 
 
 class Formats(BaseModel):
@@ -32,6 +33,13 @@ class StopsSchema(IDs):
         default="dur_from_prev_point_hour",
         description="Travel duration from predecessing point",
     )
+    route_sequence: str = Field(
+        default="route_sequence",
+        description="stop visit sequence in route",
+    )
+
+    def order_stops(self, df: pd.DataFrame) -> pd.DataFrame:
+        return df.sort_values(by=[self.route_sequence]).reset_index(drop=True)
 
 
 class KpiSchema(IDs):

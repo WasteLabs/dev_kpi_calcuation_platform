@@ -1,17 +1,16 @@
-import logging
 from datetime import datetime
 import pandas as pd
 
 from . import nodes
+from . import configs as lambda_configs
+from ..configs import logger
 from ...models import Formats
 from ...models import KpiSchema
 from ...models import StopsSchema
 from ...osrm import Client
 from ... import environment as env
-from . import configs as lambda_configs
 
 
-logger = logging.getLogger(__name__)
 formats = Formats()
 stops_schema = StopsSchema()
 kpi_schema = KpiSchema()
@@ -45,9 +44,10 @@ class Session(object):
         self.stops = self.__generate_ids(self.stops)
         self.stops[stops_schema.dur_from_prev_point] = self.osrm_route.duration_per_stop_hours
         self.stops[stops_schema.dist_from_prev_point] = self.osrm_route.distance_per_stop_km
-        logger.info("Finish processing s  tops\n")
+        logger.info("Finish processing stops")
 
     def extract_osrm_route_details(self):
+        self.stops = stops_schema.order_stops(self.stops)
         self.osrm_route = self.client.route(self.stops.copy())
 
     def compute_kpi(self):

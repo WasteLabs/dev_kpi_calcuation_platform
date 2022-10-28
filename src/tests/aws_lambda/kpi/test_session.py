@@ -26,6 +26,11 @@ class TestSession:
         for key in schema.__dict__.values():
             assert key in df.columns
 
+    def __check_stops_ordering(self, df: pd.DataFrame, route_sequence_col):
+        route_sequences = df[route_sequence_col]
+        route_sequence = (route_sequences - route_sequences.shift(1))[1:]
+        assert (route_sequence > 0).all()
+
     def test_process_stops(
             self,
             session: Session,
@@ -37,18 +42,27 @@ class TestSession:
         session.process_stops()
         assert "stops" in session.__dict__
         self.__check_schema(schema=stops_schema, df=session.stops)
+        self.__check_stops_ordering(
+            df=session.stops.copy(),
+            route_sequence_col=stops_schema.route_sequence,
+        )
 
     def test_compute_kpi(
             self,
             session: Session,
             london_coordinates: pd.DataFrame,
             kpi_schema: object,
+            stops_schema: object,
     ):
         session.stops = london_coordinates
         session.extract_osrm_route_details()
         session.compute_kpi()
         assert "kpi" in session.__dict__
         self.__check_schema(schema=kpi_schema, df=session.kpi)
+        self.__check_stops_ordering(
+            df=session.stops.copy(),
+            route_sequence_col=stops_schema.route_sequence,
+        )
 
     def test_run_lifecycle(self, s3_sample_path: str):
         session = Session(source_path=s3_sample_path)
