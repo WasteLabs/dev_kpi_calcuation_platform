@@ -10,6 +10,11 @@ def route_query_driver(host: str) -> QueryDriver:
 
 
 @pytest.fixture
+def trip_query_driver(host: str) -> QueryDriver:
+    return QueryDriver(host=host, service="trip")
+
+
+@pytest.fixture
 def df_coordinates() -> pd.DataFrame:
     return pd.DataFrame({
         "latitude": [0, 1, 2],
@@ -18,11 +23,20 @@ def df_coordinates() -> pd.DataFrame:
 
 
 @pytest.fixture
-def expected_query() -> str:
+def expected_route_query() -> str:
     return (
         "http://router.project-osrm.org/route/v1/driving/0,0;1,1;2,2?"
         "overview=full&steps=true&alternatives=false"
         "&geometries=geojson&annotations=true&continue_straight=true"
+    )
+
+
+@pytest.fixture
+def expected_trip_query() -> str:
+    return (
+        "http://router.project-osrm.org/trip/v1/driving/0,0;1,1;2,2?"
+        "roundtrip=false&source=first&destination=last&steps=true&"
+        "geometries=geojson&annotations=true&overview=full"
     )
 
 
@@ -47,14 +61,23 @@ class TestRouteQueryDriver:
         except RuntimeError:
             assert True
 
-    def test_preprocess_query(
+    def test_preprocess_route_driver_query(
             self,
             route_query_driver: QueryDriver,
             df_coordinates: pd.DataFrame,
-            expected_query: str,
+            expected_route_query: str,
     ):
         preprocessed_query = route_query_driver.preprocess_query(df_coordinates)
-        assert preprocessed_query == expected_query
+        assert preprocessed_query == expected_route_query
+
+    def test_preprocess_trip_driver_query(
+            self,
+            trip_query_driver: QueryDriver,
+            df_coordinates: pd.DataFrame,
+            expected_trip_query: str,
+    ):
+        preprocessed_query = trip_query_driver.preprocess_query(df_coordinates)
+        assert preprocessed_query == expected_trip_query
 
     def test_route_query(
             self,
