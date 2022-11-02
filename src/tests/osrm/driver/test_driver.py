@@ -20,7 +20,7 @@ def df_coordinates() -> pd.DataFrame:
 @pytest.fixture
 def expected_query() -> str:
     return (
-        "http://router.project-osrm.org//route/v1/driving/0,0;1,1;2,2?"
+        "http://router.project-osrm.org/route/v1/driving/0,0;1,1;2,2?"
         "overview=full&steps=true&alternatives=false"
         "&geometries=geojson&annotations=true&continue_straight=true"
     )

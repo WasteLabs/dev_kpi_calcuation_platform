@@ -81,6 +81,7 @@ class QueryDriver(object):
                 response = response.json()
                 return response
         except Exception as exc:
-            exception = RuntimeError(f"Failure request from osrm driver: {exc}")
+            msg = f"Failure request from osrm driver: {exc}: {url}"
+            exception = RuntimeError(msg)
             logging.error(exception)
             raise exception

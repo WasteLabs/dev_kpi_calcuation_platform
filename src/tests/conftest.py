@@ -8,7 +8,7 @@ from src.osrm import Client
 
 @pytest.fixture
 def host() -> str:
-    return "http://router.project-osrm.org/"
+    return "http://router.project-osrm.org"
 
 
 @pytest.fixture
