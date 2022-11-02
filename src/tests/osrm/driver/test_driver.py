@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 import pytest
 
@@ -20,6 +21,14 @@ def df_coordinates() -> pd.DataFrame:
         "latitude": [0, 1, 2],
         "longitude": [0, 1, 2],
     })
+
+
+@pytest.fixture
+def malformed_host_url() -> str:
+    return (
+        "route/v1/driving/0,0;1,1;2,2"
+        "dsdasdasdasdas"
+    )
 
 
 @pytest.fixture
@@ -58,6 +67,17 @@ class TestRouteQueryDriver:
         try:
             QueryDriver(host="dummy_host", service=0)
             raise AssertionError("Must fail due to incorrect service paramter")
+        except RuntimeError:
+            assert True
+
+    def test_factory_malformed_url(self, malformed_host_url: str):
+        try:
+            response = QueryDriver(
+                host="dummy_host",
+                service="route",
+            ).query(malformed_host_url)
+            logging.error(response)
+            raise AssertionError("Must fail due to incorrect host parameter")
         except RuntimeError:
             assert True
 
