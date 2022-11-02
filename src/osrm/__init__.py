@@ -1,4 +1,4 @@
-from . import drivers
+from . import driver
 from . import parsers
 from .client import Client
 # from .route import OSRMRouteService

@@ -1,15 +1,15 @@
 import pandas as pd
 
-from src.osrm.drivers.route import RouteQueryDriver
+from src.osrm.driver import QueryDriver
 from src.osrm.parsers.route import RouteParser
 
 
 class Client(object):
 
     def __init__(self, host: str, timeout: int = 5):
-        self.__driver_route = RouteQueryDriver(host=host, timeout=timeout)
+        self.__driver_route = QueryDriver(host=host, timeout=timeout, service="route")
 
-    def route(self, X: pd.DataFrame, *args, **kwargs):
+    def route(self, X: pd.DataFrame,  *args, **kwargs):
         """
         Function
 

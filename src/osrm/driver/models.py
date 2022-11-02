@@ -11,3 +11,7 @@ class RouteParameters(AbstractParameters):
     geometries: Literal["polyline", "polyline6", "geojson"] = Field(default='geojson')
     annotations: Literal["true", "false"] = Field(default='true')
     continue_straight: Literal["true", "false"] = Field(default='true')
+
+
+class TripParameters(AbstractParameters):
+    pass

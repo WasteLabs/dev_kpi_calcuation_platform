@@ -1,6 +1,6 @@
 import pytest
 
-from src.osrm.drivers.models import RouteParameters
+from src.osrm.driver.models import RouteParameters
 
 
 @pytest.fixture
