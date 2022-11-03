@@ -1,5 +1,3 @@
-import logging
-
 import pandas as pd
 import pandera as pa
 import pytest
@@ -101,6 +99,4 @@ class TestStopsSchema:
 
     def test_factory_status_record(self, expected_status):
         status_record = ProcessingStatus.factory_status_record(**expected_status)
-        logging.error(status_record)
-        logging.error(status_record.columns)
-        # logging.error(pd.DataFrame([expected_status]))
+        assert pd.DataFrame([expected_status]).equals(status_record)
