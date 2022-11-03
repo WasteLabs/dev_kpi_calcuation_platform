@@ -53,7 +53,10 @@ def execute_session_with_status_log(
             status="failure",
             error_description=str(exc),
         )
+        logging.error(f"EXCEPTION:\n{exc}\n")
         logging.error(f"EVENT:\n{event}\n")
         logging.error(f"CONTEXT:\n{context}\n")
     finally:
         send_status_to_athena(status_record=status_record)
+
+    return status_record
