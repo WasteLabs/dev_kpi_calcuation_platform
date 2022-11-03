@@ -235,3 +235,13 @@ resource "aws_glue_catalog_table" "status" {
   }
 
 }
+
+resource "aws_glue_partition_index" "status_parition_index" {
+  database_name = local.database
+  table_name    = aws_glue_catalog_table.status.name
+
+  partition_index {
+    index_name = "${local.tables["status"]}_partition_index"
+    keys       = ["processing_id"]
+  }
+}
