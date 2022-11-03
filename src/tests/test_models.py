@@ -1,6 +1,9 @@
+import logging
+
 import pandas as pd
 import pandera as pa
 import pytest
+from src.models import ProcessingStatus
 
 
 @pytest.fixture
@@ -41,6 +44,15 @@ def incorrect_stops_schema_2() -> pd.DataFrame:
 @pytest.fixture
 def pandera_stops_schema(stops_schema: object) -> pd.DataFrame:
     return stops_schema.factory_raw_user_stops_schema()
+
+
+@pytest.fixture
+def expected_status() -> dict[str, str]:
+    return {
+        "processing_id": "dummy_text",
+        "status": "dummy_text",
+        "error_description": "dummy_text",
+    }
 
 
 class TestStopsSchema:
@@ -86,3 +98,9 @@ class TestStopsSchema:
             raise AssertionError("Must fail due to incorrect schema")
         except pa.errors.SchemaError:
             assert True
+
+    def test_factory_status_record(self, expected_status):
+        status_record = ProcessingStatus.factory_status_record(**expected_status)
+        logging.error(status_record)
+        logging.error(status_record.columns)
+        # logging.error(pd.DataFrame([expected_status]))

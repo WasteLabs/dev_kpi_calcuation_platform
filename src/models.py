@@ -25,6 +25,35 @@ class IDs(BaseModel):
     )
 
 
+class ProcessingStatus(BaseModel):
+    processing_id: str = Field(
+        default="processing_id",
+        description="Processing id timestamp + filename",
+    )
+    status: str = Field(
+        default="status",
+        description="processing status",
+    )
+    error_description: str = Field(
+        default="error_description",
+        description="Error description",
+    )
+
+    @classmethod
+    def factory_status_record(
+            cls,
+            processing_id: str,
+            status: str,
+            error_description: str,
+    ) -> pd.DataFrame:
+        status_record = cls(
+            processing_id=processing_id,
+            status=status,
+            error_description=error_description,
+        )
+        return pd.DataFrame(status_record.dict(), index=[0])
+
+
 class StopsSchema(IDs):
     latitude: str = Field(
         default="latitude",
