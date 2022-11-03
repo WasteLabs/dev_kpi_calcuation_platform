@@ -19,6 +19,21 @@ def coordinates_for_tsp(london_coordinates: pd.DataFrame):
     return london_coordinates.drop(columns=[stops.route_sequence])
 
 
+@pytest.fixture
+def depot_mismatch() -> pd.DataFrame:
+    return pd.DataFrame({
+        "latitude": [0, 1, 2, 3, 4],
+        "longitude": [0, 1, 2, 3, 4],
+    })
+
+
+@pytest.fixture
+def invalid_schema() -> pd.DataFrame:
+    return pd.DataFrame({
+        "latitude": [0, 1, 2, 3, 4],
+    })
+
+
 class TestSession:
 
     def test_init(self, s3_sample_path: str, s3_fname: str):
@@ -90,6 +105,30 @@ class TestSession:
             df=session.stops.copy(),
             route_sequence_col=stops_schema.route_sequence,
         )
+
+    def test_invalid_schema(
+            self,
+            session: Session,
+            invalid_schema: pd.DataFrame,
+    ):
+        session.stops = invalid_schema
+        try:
+            session.validate_user_stops()
+            raise AssertionError("Must fail due to missing longitude column")
+        except RuntimeError:
+            assert True
+
+    def test_depot_point_mismatch(
+            self,
+            session: Session,
+            depot_mismatch: pd.DataFrame,
+    ):
+        session.stops = depot_mismatch
+        try:
+            session.validate_user_stops()
+            raise AssertionError("Must fail due to depot coordinates mismatch")
+        except RuntimeError:
+            assert True
 
     def test_run_lifecycle(self, s3_sample_path: str):
         session = Session(source_path=s3_sample_path)

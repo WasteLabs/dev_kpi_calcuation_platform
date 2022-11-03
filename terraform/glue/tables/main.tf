@@ -8,8 +8,9 @@ locals {
 
   database = data.terraform_remote_state.database.outputs.database
   tables = {
-    "kpi"   = "${local.env}_kpi"
-    "stops" = "${local.env}_stops"
+    "kpi"    = "${local.env}_kpi"
+    "stops"  = "${local.env}_stops"
+    "status" = "${local.env}_status"
   }
   s3_bucket_name = data.terraform_remote_state.s3.outputs.s3_bucket_id
   tags = {
@@ -185,6 +186,62 @@ resource "aws_glue_partition_index" "stops_parition_index" {
 
   partition_index {
     index_name = "${local.tables["stops"]}_partition_index"
+    keys       = ["processing_id"]
+  }
+}
+
+resource "aws_glue_catalog_table" "status" {
+  name          = local.tables["status"]
+  database_name = local.database
+
+  table_type = "EXTERNAL_TABLE"
+
+  parameters = {
+    EXTERNAL              = "TRUE"
+    "parquet.compression" = "SNAPPY"
+  }
+
+  storage_descriptor {
+    location      = "s3://${local.s3_bucket_name}/${local.env}/02_primary/status/"
+    input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+    output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+
+    ser_de_info {
+      name                  = local.tables["status"]
+      serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+
+      parameters = {
+        "serialization.format" = 1
+      }
+    }
+
+    columns {
+      name    = "status"
+      type    = "string"
+      comment = "Processing status."
+    }
+
+    columns {
+      name    = "error_description"
+      type    = "string"
+      comment = "Error description."
+    }
+
+  }
+  partition_keys {
+    name    = "processing_id"
+    type    = "string"
+    comment = "File primary key with format YYYY-MM-DD HH:MI:SS__FILENAME"
+  }
+
+}
+
+resource "aws_glue_partition_index" "status_parition_index" {
+  database_name = local.database
+  table_name    = aws_glue_catalog_table.status.name
+
+  partition_index {
+    index_name = "${local.tables["status"]}_partition_index"
     keys       = ["processing_id"]
   }
 }
