@@ -39,7 +39,7 @@ def london_coordinates() -> pd.DataFrame:
 
 @pytest.fixture
 def osrm_client(host: str) -> Client:
-    return Client(host=host, timeout=5)
+    return Client(host=host, timeout=20)
 
 
 @pytest.fixture

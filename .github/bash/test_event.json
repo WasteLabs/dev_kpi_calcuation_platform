@@ -27,7 +27,7 @@
             "arn": "arn:aws:s3:::example-bucket"
           },
           "object": {
-            "key": "test/01_raw/user_stops/test_stops.xlsx",
+            "key": "test/01_raw/user_stops/stops_without_sequence.xlsx",
             "size": 1024,
             "eTag": "0123456789abcdef0123456789abcdef",
             "sequencer": "0A1B2C3D4E5F678901"

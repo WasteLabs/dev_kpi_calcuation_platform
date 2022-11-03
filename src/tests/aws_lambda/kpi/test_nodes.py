@@ -58,5 +58,5 @@ class TestNodes:
             generate_id_sample: pd.DataFrame,
             stops_schema: object,
     ) -> pd.DataFrame:
-        stops = nodes.generate_id(stops=generate_id_sample)
+        stops = nodes.expand_processing_id(stops=generate_id_sample, processing_id="dummy_id")
         assert stops_schema.col_processing_id in stops.columns
