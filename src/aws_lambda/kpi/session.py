@@ -1,5 +1,6 @@
 from datetime import datetime
 import pandas as pd
+import pandera as pa
 
 from . import nodes
 from . import configs as lambda_configs
@@ -28,6 +29,30 @@ class Session(object):
         self.timestamp_id = str(datetime.now().strftime(formats.datetime_format))
         self.osrm_client = Client(host=env.OSRM_HOST)
         self.processing_id = f"{self.timestamp_id}__{self.filename}"
+
+    def __validate_schema(self, stops: pd.DataFrame) -> pd.DataFrame:
+        try:
+            pandera_schema = stops_schema.factory_raw_user_stops_schema()
+            return pandera_schema.validate(self.stops)
+        except pa.errors.SchemaError as exc:
+            msg = (f"Provided user file with incorrect schema: {exc}")
+            raise RuntimeError(msg)
+
+    def __validate_depot_points(self, stops: pd.DataFrame):
+        coordinates = stops[[
+            stops_schema.latitude,
+            stops_schema.longitude,
+        ]].to_dict("records")
+        if coordinates[0] != coordinates[-1]:
+            msg = (
+                "Depot coordinates mismatch. Please ensure "
+                "exact match of first and last points coordinates"
+            )
+            raise RuntimeError(msg)
+
+    def validate_user_stops(self) -> pd.DataFrame:
+        self.stops = self.__validate_schema(self.stops)
+        self.__validate_depot_points(self.stops)
 
     def read_stops(self):
         logger.info(f"Start reading stops from: {self.source_path}")
@@ -95,6 +120,7 @@ class Session(object):
 
     def run_lifecycle(self):
         self.read_stops()
+        self.validate_user_stops()
         self.ensure_route_sequence_presence()
         self.extract_osrm_route_details()
         self.process_stops()
