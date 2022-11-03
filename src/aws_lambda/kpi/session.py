@@ -25,8 +25,9 @@ class Session(object):
         assert type(source_path) is str
         self.source_path = source_path
         self.filename = source_path.rsplit("/", 1)[1]
-        self.timestamp_id = datetime.now().strftime(formats.datetime_format)
+        self.timestamp_id = str(datetime.now().strftime(formats.datetime_format))
         self.osrm_client = Client(host=env.OSRM_HOST)
+        self.processing_id = f"{self.timestamp_id}__{self.filename}"
 
     def read_stops(self):
         logger.info(f"Start reading stops from: {self.source_path}")
@@ -37,7 +38,7 @@ class Session(object):
         return df \
             .pipe(lambda x: nodes.expand_name(stops=x, fname=self.filename)) \
             .pipe(lambda x: nodes.expand_processing_time(stops=x, timestamp_id=self.timestamp_id)) \
-            .pipe(nodes.generate_id)
+            .pipe(lambda x: nodes.expand_processing_id(stops=x, processing_id=self.processing_id))
 
     def process_stops(self):
         logger.info("Start processing stops")
