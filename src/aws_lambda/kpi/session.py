@@ -26,7 +26,7 @@ class Session(object):
         self.source_path = source_path
         self.filename = source_path.rsplit("/", 1)[1]
         self.timestamp_id = datetime.now().strftime(formats.datetime_format)
-        self.client = Client(host=env.OSRM_HOST)
+        self.osrm_client = Client(host=env.OSRM_HOST)
 
     def read_stops(self):
         logger.info(f"Start reading stops from: {self.source_path}")
@@ -46,9 +46,23 @@ class Session(object):
         self.stops[stops_schema.dist_from_prev_point] = self.osrm_route.distance_per_stop_km
         logger.info("Finish processing stops")
 
+    def __solve_travelling_salesman_problem(self, col_route_seq: str):
+        osrm_trip = self.osrm_client.trip(X=self.stops)
+        self.stops[col_route_seq] = osrm_trip.route_sequence
+        logger.info("Succesfull extraction route sequence")
+
+    def ensure_route_sequence_presence(self):
+        logger.info("Start route sequence presence ensure")
+        col_route_sequence = stops_schema.route_sequence
+        is_route_sequnce_provided = col_route_sequence in self.stops
+        logger.info(f"Is route_sequence provided: {is_route_sequnce_provided}")
+        if not is_route_sequnce_provided:
+            self.__solve_travelling_salesman_problem(col_route_sequence)
+        logger.info("Finish route sequence presence ensure")
+
     def extract_osrm_route_details(self):
         self.stops = stops_schema.order_stops(self.stops)
-        self.osrm_route = self.client.route(self.stops.copy())
+        self.osrm_route = self.osrm_client.route(self.stops.copy())
 
     def compute_kpi(self):
         logger.info("Start computing kpi")
@@ -80,6 +94,7 @@ class Session(object):
 
     def run_lifecycle(self):
         self.read_stops()
+        self.ensure_route_sequence_presence()
         self.extract_osrm_route_details()
         self.process_stops()
         self.compute_kpi()

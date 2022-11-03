@@ -2,12 +2,21 @@ import pandas as pd
 import pytest
 
 
+from src.models import StopsSchema
 from src.aws_lambda.kpi.session import Session
+
+
+stops = StopsSchema()
 
 
 @pytest.fixture
 def session(s3_sample_path: str):
     return Session(source_path=s3_sample_path)
+
+
+@pytest.fixture
+def coordinates_for_tsp(london_coordinates: pd.DataFrame):
+    return london_coordinates.drop(columns=[stops.route_sequence])
 
 
 class TestSession:
@@ -38,6 +47,24 @@ class TestSession:
             stops_schema: object,
     ):
         session.stops = london_coordinates
+        session.extract_osrm_route_details()
+        session.process_stops()
+        assert "stops" in session.__dict__
+        self.__check_schema(schema=stops_schema, df=session.stops)
+        self.__check_stops_ordering(
+            df=session.stops.copy(),
+            route_sequence_col=stops_schema.route_sequence,
+        )
+
+    def test_tsp_solving(
+            self,
+            session: Session,
+            coordinates_for_tsp: pd.DataFrame,
+            stops_schema: object,
+    ):
+        assert stops_schema.route_sequence not in coordinates_for_tsp.columns
+        session.stops = coordinates_for_tsp
+        session.ensure_route_sequence_presence()
         session.extract_osrm_route_details()
         session.process_stops()
         assert "stops" in session.__dict__
