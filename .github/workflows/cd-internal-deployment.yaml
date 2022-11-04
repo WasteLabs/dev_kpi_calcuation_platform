@@ -123,6 +123,7 @@ jobs:
       id: lambda-plan
       env:
         TF_WORKSPACE: ${{ matrix.environment }}
+        TF_VAR_build_tag: ${{ needs.push-latest-build.outputs.build-tag }}
       run: cd terraform/lambda && make plan
       continue-on-error: false
 
