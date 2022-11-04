@@ -136,4 +136,5 @@ jobs:
       id: lambda-apply
       env:
         TF_WORKSPACE: ${{ matrix.environment }}
+        TF_VAR_build_tag: ${{ needs.push-latest-build.outputs.build-tag }}
       run: cd terraform/lambda && make apply
