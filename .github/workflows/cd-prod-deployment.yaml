@@ -131,6 +131,7 @@ jobs:
       id: lambda-plan
       env:
         TF_WORKSPACE: ${{ matrix.environment }}
+        TF_VAR_build_tag: ${{ github.ref_name }}
       run: cd terraform/lambda && make plan
       continue-on-error: false
 
@@ -143,4 +144,5 @@ jobs:
       id: lambda-apply
       env:
         TF_WORKSPACE: ${{ matrix.environment }}
+        TF_VAR_build_tag: ${{ github.ref_name }}
       run: cd terraform/lambda && make apply
