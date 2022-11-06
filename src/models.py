@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 import pandas as pd
+import pandera as pa
 
 
 class Formats(BaseModel):
@@ -24,7 +25,44 @@ class IDs(BaseModel):
     )
 
 
+class ProcessingStatus(BaseModel):
+    processing_id: str = Field(
+        default="processing_id",
+        description="Processing id timestamp + filename",
+    )
+    status: str = Field(
+        default="status",
+        description="processing status",
+    )
+    error_description: str = Field(
+        default="error_description",
+        description="Error description",
+    )
+
+    @classmethod
+    def factory_status_record(
+            cls,
+            processing_id: str,
+            status: str,
+            error_description: str,
+    ) -> pd.DataFrame:
+        status_record = cls(
+            processing_id=processing_id,
+            status=status,
+            error_description=error_description,
+        )
+        return pd.DataFrame(status_record.dict(), index=[0])
+
+
 class StopsSchema(IDs):
+    latitude: str = Field(
+        default="latitude",
+        description="coordinate latitude",
+    )
+    longitude: str = Field(
+        default="longitude",
+        description="coordinate longitude",
+    )
     dist_from_prev_point: str = Field(
         default="dist_from_prev_point_km",
         description="Travel distance from predecessing point",
@@ -40,6 +78,50 @@ class StopsSchema(IDs):
 
     def order_stops(self, df: pd.DataFrame) -> pd.DataFrame:
         return df.sort_values(by=[self.route_sequence]).reset_index(drop=True)
+
+    def factory_raw_user_stops_schema(self) -> pa.DataFrameSchema:
+        return pa.DataFrameSchema({
+            self.latitude: pa.Column(
+                dtype=float,
+                nullable=False,
+                unique=False,
+                coerce=True,
+                required=True,
+                description="Coordinate latitude",
+            ),
+            self.longitude: pa.Column(
+                dtype=float,
+                nullable=False,
+                unique=False,
+                coerce=True,
+                required=True,
+                description="Coordinate longitude",
+            ),
+            self.dist_from_prev_point: pa.Column(
+                dtype=float,
+                nullable=False,
+                unique=False,
+                coerce=True,
+                required=False,
+                description="Distance from previous point in km",
+            ),
+            self.dur_from_prev_point: pa.Column(
+                dtype=float,
+                nullable=False,
+                unique=False,
+                coerce=True,
+                required=False,
+                description="Duration from previous point in hours",
+            ),
+            self.route_sequence: pa.Column(
+                dtype=float,
+                nullable=False,
+                unique=False,
+                coerce=True,
+                required=False,
+                description="stop visit sequence in route",
+            ),
+        })
 
 
 class KpiSchema(IDs):

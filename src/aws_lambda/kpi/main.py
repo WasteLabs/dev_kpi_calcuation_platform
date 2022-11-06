@@ -1,4 +1,5 @@
 from .session import Session
+from ...middleware import execute_session_with_status_log
 
 
 def fabricate_source_file_path(event) -> str:
@@ -9,4 +10,9 @@ def fabricate_source_file_path(event) -> str:
 
 def handler(event, context):
     session = Session(source_path=fabricate_source_file_path(event))
-    session.run_lifecycle()
+    status = execute_session_with_status_log(
+        session,
+        event=event,
+        context=context,
+    )
+    return status

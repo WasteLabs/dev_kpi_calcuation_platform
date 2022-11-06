@@ -1,47 +1,15 @@
-from abc import ABC, abstractmethod
 from copy import deepcopy
 import logging
 from typing import Any
+from typing import Union
 
 from pydantic import BaseModel
 from pydantic import Field
-import requests
+
+from .models import Schema
 
 
-class AbstractQueryDriver(ABC):
-
-    def __init__(self, host: str, timeout: int):
-        self.__host = host
-        self.__timeout = timeout
-
-    def query(self, url: str) -> dict[str, Any]:
-        try:
-            with requests.Session() as session:
-                response = session.get(url, timeout=self.timeout)
-                response = response.json()
-                return response
-        except Exception as exc:
-            exception = RuntimeError(f"Failure request from osrm driver: {exc}")
-            logging.error(exception)
-            raise exception
-
-    @property
-    def host(self):
-        return self.__host
-
-    @property
-    def timeout(self):
-        return self.__timeout
-
-    def _pack_url(self, service: str, coordinates: str, params: str) -> str:
-        return f"{self.host}/{service}/{coordinates}{params}"
-
-    @abstractmethod
-    def preprocess_query(self, *args, **kwargs) -> str:
-        """
-        Function organizing query factory
-        """
-        pass
+schema = Schema()
 
 
 class AbstractParameters(BaseModel):
@@ -61,6 +29,11 @@ class AbstractParameters(BaseModel):
 class AbstractParser(BaseModel):
     content: dict[str, Any] = Field(description="Response content")
 
+    def __generate_exc(self, keys: Union[list[str], str]):
+        msg = f"Incorrect key or key sequence is provided: {keys}"
+        logging.error(msg)
+        raise RuntimeError(msg)
+
     def _get_key_seq_value(
             self,
             content: dict[str, Any],
@@ -72,14 +45,18 @@ class AbstractParser(BaseModel):
                 value = value[key]
             return value
         except KeyError:
-            msg = f"Incorrect key in key sequence: {key_sequence}"
-            logging.error(msg)
-            raise RuntimeError(msg)
+            self.__generate_exc(keys=key_sequence)
         except TypeError:
-            msg = f"Incorrect key index reference: {key_sequence}"
-            logging.error(msg)
-            raise RuntimeError(msg)
+            self.__generate_exc(keys=key_sequence)
         except IndexError:
-            msg = f"Incorrect key index reference: {key_sequence}"
-            logging.error(msg)
-            raise RuntimeError(msg)
+            self.__generate_exc(keys=key_sequence)
+
+    def _get_pandas_field(
+            self,
+            df: dict[str, Any],
+            key: str,
+    ) -> list[Any]:
+        try:
+            return df[key].to_list()
+        except KeyError:
+            self.__generate_exc(keys=key)
