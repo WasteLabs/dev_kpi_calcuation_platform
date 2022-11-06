@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dev_kpi_calculation_platform"
-version = "1.0.0"
+version = "1.0.1"
 description = "Route KPI calculation demo platform for potential customer demonstrations"
 readme = "README.md"
 authors = [
