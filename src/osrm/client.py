@@ -1,32 +1,65 @@
+from typing import Union
 import pandas as pd
 
-from src.osrm.drivers.route import RouteQueryDriver
+from src.osrm.driver import QueryDriver
 from src.osrm.parsers.route import RouteParser
+from src.osrm.parsers.trip import TripParser
 
 
 class Client(object):
 
-    def __init__(self, host: str, timeout: int = 5):
-        self.__driver_route = RouteQueryDriver(host=host, timeout=timeout)
+    OSRM_ROUTE_SERVICE = "route"
+    OSRM_TRIP_SERVICE = "trip"
 
-    def route(self, X: pd.DataFrame, *args, **kwargs):
+    def __init__(self, host: str, timeout: int = 10):
+        self.__host = host
+        self.__timeout = timeout
+
+    def __perform_extraction(
+        self,
+        service: str,
+        X: pd.DataFrame,
+        parser: Union[RouteParser, TripParser],
+        *args, **kwargs,
+    ) -> Union[RouteParser, TripParser]:
+        driver = QueryDriver(
+            host=self.__host,
+            timeout=self.__timeout,
+            service=service,
+        )
+        url_query = driver.preprocess_query(X, *args, **kwargs)
+        response = driver.query(url=url_query)
+        return parser(content=response)
+
+    def route(self, X: pd.DataFrame,  *args, **kwargs):
         """
-        Function
+        Function organizing interaction with `route` service
 
         Args:
-        X (pd.DataFrame): coordinates dataframe
-            with `latitude` and `longitude` columns
-        *args, **kwargs available options:
-            overview: Literal["full", "false", "simplified"] = Field(default='full')
-            steps: Literal["true", "false"] = Field(default='true')
-            alternatives: Literal["true", "false"] = Field(default='false')
-            geometries: Literal["polyline", "polyline6", "geojson"] = Field(default='geojson')
-            annotations: Literal["true", "false"] = Field(default='true')
-            continue_straight: Literal["true", "false"] = Field(default='true')
+        X (pd.DataFrame): coordinates dataframe with `latitude`, `longitude` fields
+        *args, **kwargs are available under osrm.driver.models.RouteParameters
         """
-        url_query = self.__driver_route.preprocess_query(X, *args, **kwargs)
-        response = self.__driver_route.query(url=url_query)
-        return RouteParser(content=response)
+        return self.__perform_extraction(
+            service=self.OSRM_ROUTE_SERVICE,
+            X=X,
+            parser=RouteParser,
+            *args, **kwargs,
+        )
+
+    def trip(self, X: pd.DataFrame,  *args, **kwargs):
+        """
+        Function organizing interaction with `trip` service
+
+        Args:
+        X (pd.DataFrame): coordinates dataframe with `latitude` and `longitude` columns
+        *args, **kwargs are available under osrm.driver.models.RouteParameters
+        """
+        return self.__perform_extraction(
+            service=self.OSRM_TRIP_SERVICE,
+            X=X.copy(),
+            parser=TripParser,
+            *args, **kwargs,
+        )
 
     def match(self):
         raise NotImplementedError("Functionality is not implemented yet.")

@@ -24,11 +24,8 @@ def expand_processing_time(
     return stops
 
 
-def generate_id(stops: pd.DataFrame) -> pd.DataFrame:
-    stops[schema.col_processing_id] = (
-        stops[schema.col_processing_datetime].astype(str) + "__" +
-        stops[schema.col_filename].astype(str)
-    )
+def expand_processing_id(stops: pd.DataFrame, processing_id: str) -> pd.DataFrame:
+    stops[schema.col_processing_id] = processing_id
     return stops
 
 

@@ -5,7 +5,7 @@ from src.osrm import Client
 
 class TestClient:
 
-    def test_london_coordinates(
+    def test_route_service(
             self,
             osrm_client: Client,
             london_coordinates: pd.DataFrame,
@@ -13,7 +13,18 @@ class TestClient:
         response = osrm_client.route(london_coordinates).content
         assert response["code"] == "Ok"
 
-    def test_parametrization(
+    def test_trip_service(
+            self,
+            osrm_client: Client,
+            london_coordinates: pd.DataFrame,
+    ):
+        response = osrm_client.trip(london_coordinates).content
+        assert response["code"] == "Ok"
+
+    def __assert_response_difference(self, default: str, parametrized: str):
+        assert len(default) > len(parametrized)
+
+    def test_route_service_parametrization(
             self,
             osrm_client: Client,
             london_coordinates: pd.DataFrame,
@@ -28,4 +39,25 @@ class TestClient:
                 annotations="false",
             ).content,
         )
-        assert len(response_def_params) > len(response_custom_params)
+        self.__assert_response_difference(
+            response_def_params,
+            response_custom_params,
+        )
+
+    def test_trip_service_parametrization(
+            self,
+            osrm_client: Client,
+            london_coordinates: pd.DataFrame,
+    ):
+        response_def_params = str(osrm_client.trip(X=london_coordinates).content)
+        response_custom_params = str(
+            osrm_client.trip(
+                london_coordinates,
+                overview="false",
+                steps="false",
+            ).content,
+        )
+        self.__assert_response_difference(
+            response_def_params,
+            response_custom_params,
+        )
